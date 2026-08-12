@@ -6,10 +6,10 @@
   "description": "Speaks Claude Code's responses aloud using your OS's built-in text-to-speech (say / SAPI / espeak). No API keys, no cloud service.",
   "author": {
     "name": "jaafar ziab",
-    "url": "https://github.com/diabjaafar9"
+    "url": "https://github.com/jaafar-ziab"
   },
-  "homepage": "https://github.com/diabjaafar9/claude-speak",
-  "repository": "https://github.com/diabjaafar9/claude-speak",
+  "homepage": "https://github.com/jaafar-ziab/claude-speak",
+  "repository": "https://github.com/jaafar-ziab/claude-speak",
   "license": "MIT",
   "keywords": ["tts", "voice", "accessibility", "hooks"]
 }

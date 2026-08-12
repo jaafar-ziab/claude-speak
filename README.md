@@ -25,7 +25,7 @@ look away, and know the moment it's actually asking for your input.
 From inside a Claude Code session:
 
 ```
-/plugin marketplace add diabjaafar9/claude-speak
+/plugin marketplace add jaafar-ziab/claude-speak
 /plugin install speak@speak-tts
 ```
 

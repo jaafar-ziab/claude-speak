@@ -6,12 +6,6 @@ __pycache__/
 # Editor/IDE
 .idea/
 .vscode/
-
+.claude/
 # Personal scratch notes, not part of the plugin
 notes.md
-
-# TTS debug log (per-machine, regenerated automatically) — only present if
-# this repo itself is used as the plugin source while developing it. The
-# enabled flag, worker PID, and queue are session-scoped and live in the OS
-# temp dir instead, so they never land in the project directory at all.
-.claude/tts.log
