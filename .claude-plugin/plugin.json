@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "speak",
+  "displayName": "Speak (TTS)",
+  "version": "0.1.0",
+  "description": "Speaks Claude Code's responses aloud using your OS's built-in text-to-speech (say / SAPI / espeak). No API keys, no cloud service.",
+  "author": {
+    "name": "jaafar ziab",
+    "url": "https://github.com/diabjaafar9"
+  },
+  "homepage": "https://github.com/diabjaafar9/claude-speak",
+  "repository": "https://github.com/diabjaafar9/claude-speak",
+  "license": "MIT",
+  "keywords": ["tts", "voice", "accessibility", "hooks"]
+}

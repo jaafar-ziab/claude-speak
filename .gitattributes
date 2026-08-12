@@ -1,0 +1,5 @@
+# Force LF so the hook script and skill's line endings stay consistent
+# across macOS/Linux/Windows checkouts.
+scripts/tts.py text eol=lf
+skills/toggle/SKILL.md text eol=lf
+hooks/hooks.json text eol=lf

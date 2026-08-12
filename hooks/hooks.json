@@ -1,0 +1,57 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.ps1\" -SessionStart || python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.py\" --session-start || python \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.py\" --session-start"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.ps1\" || python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.py\" || python \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.py\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.ps1\" || python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.py\" || python \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.py\""
+          }
+        ]
+      }
+    ],
+    "MessageDisplay": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.ps1\" || python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.py\" || python \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.py\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.ps1\" || python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.py\" || python \"${CLAUDE_PLUGIN_ROOT}/scripts/tts.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

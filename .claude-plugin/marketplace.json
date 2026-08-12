@@ -1,0 +1,15 @@
+{
+  "name": "speak-tts",
+  "owner": {
+    "name": "jaafar ziab",
+    "url": "https://github.com/diabjaafar9"
+  },
+  "description": "Marketplace for the speak (TTS) plugin.",
+  "plugins": [
+    {
+      "name": "speak",
+      "source": "./",
+      "description": "Speaks Claude Code's responses aloud using your OS's built-in text-to-speech."
+    }
+  ]
+}
