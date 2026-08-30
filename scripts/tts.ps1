@@ -197,10 +197,36 @@ function Confirm-Worker {
 function Invoke-Worker {
     if (-not (Test-Path $QueueDir)) { New-Item -ItemType Directory -Path $QueueDir -Force | Out-Null }
 
-    Add-Type -AssemblyName System.Speech
-    $synth = New-Object System.Speech.Synthesis.SpeechSynthesizer
-    try { $synth.SelectVoice('Microsoft Zira Desktop') } catch {}
-    $synth.Rate = -1
+    # Try WinRT (modern OneCore voices, e.g. Microsoft George) — these are the
+    # voices visible in Windows Settings > Speech, which System.Speech cannot see.
+    # Fall back to System.Speech (old SAPI) if WinRT is unavailable.
+    $useWinRT      = $false
+    $winrtSynth    = $null
+    $asTaskGeneric = $null
+
+    try {
+        [void][Windows.Media.SpeechSynthesis.SpeechSynthesizer,Windows.Media.SpeechSynthesis,ContentType=WindowsRuntime]
+        Add-Type -AssemblyName System.Runtime.WindowsRuntime -ErrorAction Stop
+        $asTaskGeneric = ([System.WindowsRuntimeSystemExtensions].GetMethods() |
+            Where-Object { $_.Name -eq 'AsTask' -and $_.GetParameters().Count -eq 1 -and
+                           $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncOperation`1' })[0]
+        $winrtSynth = New-Object Windows.Media.SpeechSynthesis.SpeechSynthesizer
+        $allVoices  = [Windows.Media.SpeechSynthesis.SpeechSynthesizer]::AllVoices
+        $george     = $allVoices | Where-Object { $_.DisplayName -like '*George*' } | Select-Object -First 1
+        if ($george) { $winrtSynth.Voice = $george }
+        $winrtSynth.Options.SpeakingRate = 0.85
+        $useWinRT = $true
+    } catch {
+        $useWinRT = $false
+    }
+
+    $sapiSynth = $null
+    if (-not $useWinRT) {
+        Add-Type -AssemblyName System.Speech
+        $sapiSynth = New-Object System.Speech.Synthesis.SpeechSynthesizer
+        try { $sapiSynth.SelectVoice('Microsoft George Desktop') } catch {}
+        $sapiSynth.Rate = -1
+    }
 
     $idle = 0
     while ($true) {
@@ -223,11 +249,45 @@ function Invoke-Worker {
         try { $text = Get-Content $chunkFile.FullName -Raw -ErrorAction Stop } catch {}
         Remove-Item $chunkFile.FullName -Force -ErrorAction SilentlyContinue
         if ($text) {
-            try { $synth.Speak($text) } catch {}
+            if ($useWinRT) {
+                $spoken = $false
+                try {
+                    $streamOp = $winrtSynth.SynthesizeTextToStreamAsync($text)
+                    $task = $asTaskGeneric.MakeGenericMethod(
+                        [Windows.Media.SpeechSynthesis.SpeechSynthesisStream]).Invoke($null, @($streamOp))
+                    $task.Wait(-1) | Out-Null
+                    $stream   = $task.Result
+                    $tempFile = [System.IO.Path]::Combine(
+                        [System.IO.Path]::GetTempPath(), [guid]::NewGuid().ToString('N') + '.wav')
+                    $netStream = [System.IO.WindowsRuntimeStreamExtensions]::AsStreamForRead(
+                        $stream.GetInputStreamAt(0))
+                    $fileStream = [System.IO.File]::Create($tempFile)
+                    $netStream.CopyTo($fileStream)
+                    $fileStream.Close(); $netStream.Dispose(); $stream.Dispose()
+                    $player = New-Object System.Media.SoundPlayer $tempFile
+                    $player.PlaySync(); $player.Dispose()
+                    Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
+                    $spoken = $true
+                } catch {}
+                if (-not $spoken) {
+                    # WinRT failed — switch to SAPI for the rest of this session
+                    $useWinRT = $false
+                    if (-not $sapiSynth) {
+                        Add-Type -AssemblyName System.Speech
+                        $sapiSynth = New-Object System.Speech.Synthesis.SpeechSynthesizer
+                        try { $sapiSynth.SelectVoice('Microsoft George Desktop') } catch {}
+                        $sapiSynth.Rate = -1
+                    }
+                    try { $sapiSynth.Speak($text) } catch {}
+                }
+            } else {
+                try { $sapiSynth.Speak($text) } catch {}
+            }
         }
     }
 
-    try { $synth.Dispose() } catch {}
+    if ($winrtSynth) { try { $winrtSynth.Dispose() } catch {} }
+    if ($sapiSynth)  { try { $sapiSynth.Dispose()  } catch {} }
 
     if (Test-Path $PidFile) {
         try {
