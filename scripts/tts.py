@@ -157,7 +157,7 @@ def _start_speech_process():
         '[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; '
         'Add-Type -AssemblyName System.Speech; '
         '$s = New-Object System.Speech.Synthesis.SpeechSynthesizer; '
-        'try { $s.SelectVoice("Microsoft Zira Desktop") } catch {}; '
+    'try { $s.SelectVoice("Microsoft George Desktop") } catch {}; '
         '$s.Rate = -1; '
         'while ($true) { '
         '  $line = [Console]::In.ReadLine(); '

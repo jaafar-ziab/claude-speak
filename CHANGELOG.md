@@ -3,6 +3,23 @@
 All notable changes to the `speak` plugin are documented here. This project
 follows [Semantic Versioning](https://semver.org/).
 
+## [0.1.1]
+
+### Changed
+
+- **Windows voice upgrade — WinRT (OneCore) with SAPI fallback.**
+  `scripts/tts.ps1` now attempts to use the Windows Runtime
+  (`Windows.Media.SpeechSynthesis`) speech engine first, which exposes modern
+  OneCore voices (e.g. Microsoft George) visible in Windows Settings > Speech
+  but invisible to the legacy SAPI/`System.Speech` stack. If WinRT
+  initialisation fails, or if a WinRT speak call fails mid-session, the worker
+  falls back transparently to SAPI for the remainder of the session.
+  Preferred voice changed from **Microsoft Zira Desktop** to
+  **Microsoft George Desktop** in both the WinRT and SAPI paths.
+- `scripts/tts.py` (the inline SAPI fallback PowerShell command used on
+  Windows when the `.ps1` worker is unavailable): updated preferred voice from
+  `Microsoft Zira Desktop` to `Microsoft George Desktop`.
+
 ## [0.1.0] - 2026-08-11
 
 ### Added
